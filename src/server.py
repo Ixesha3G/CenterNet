@@ -37,9 +37,9 @@ async def create_upload_file(file: UploadFile):
     img_numpy = cv2.imdecode(img_buffer, 1)
     ret = detector.run(img_numpy)['results']
     detector.show_results(Debugger(dataset=opt.dataset), img_numpy, ret)
-    if os.path.exists("../../../outputCenterNet/id.txt"):
-    	img_ID = int(open("../../../outputCenterNet/id.txt", "r").read()) - 1
+    if os.path.exists("../../outputCenterNet/id.txt"):
+    	img_ID = int(open("../../outputCenterNet/id.txt", "r").read()) - 1
     else:
     	img_ID = 0
-    response_img = "../../../outputCenterNet/{}add_pred.png".format(img_ID)
+    response_img = "../../outputCenterNet/{}add_pred.png".format(img_ID)
     return FileResponse(response_img)

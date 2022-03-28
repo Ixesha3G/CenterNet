@@ -106,5 +106,5 @@ class DddDetector(BaseDetector):
       results, center_thresh=self.opt.vis_thresh, img_id='bird_pred')
     #debugger.show_all_imgs(pause=self.pause)
     cur_dir = os.path.dirname(os.getcwd())
-    tar_dir = os.path.abspath(os.path.join(cur_dir, '../../outputCenterNet'))
+    tar_dir = os.path.abspath(os.path.join(cur_dir, '../outputCenterNet'))
     debugger.save_all_imgs(path=tar_dir, genID=True)
