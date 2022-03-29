@@ -30,12 +30,18 @@ TASK = 'ddd'
 opt = opts().init('{} --load_model {}'.format(TASK, MODEL_PATH).split(' '))
 detector = detector_factory[opt.task](opt)
 
-@app.get("/service/getPhotosNumber")
-def read_photos_number():
+@app.get("/service/getPhotosNumber/")
+def get_photos_number():
     if os.path.exists("../../outputCenterNet/id.txt"):
         return {"photos_number": int(open("../../outputCenterNet/id.txt", "r").read())}
     else:
         return {"photos_number": 0}
+
+@app.get("/service/getOldPhotos/{photo_id}")
+def read_photos(photo_id: int):
+    response_img = "../../outputCenterNet/{}add_pred.png".format(photo_id - 1)
+    return FileResponse(response_img)
+
 
 @app.post("/service/uploadfile/")
 async def create_upload_file(file: UploadFile):
@@ -44,9 +50,8 @@ async def create_upload_file(file: UploadFile):
     img_numpy = cv2.imdecode(img_buffer, 1)
     ret = detector.run(img_numpy)['results']
     detector.show_results(Debugger(dataset=opt.dataset), img_numpy, ret)
+    img_ID = 0
     if os.path.exists("../../outputCenterNet/id.txt"):
     	img_ID = int(open("../../outputCenterNet/id.txt", "r").read()) - 1
-    else:
-    	img_ID = 0
     response_img = "../../outputCenterNet/{}add_pred.png".format(img_ID)
     return FileResponse(response_img)
