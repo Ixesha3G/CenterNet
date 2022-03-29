@@ -30,6 +30,13 @@ TASK = 'ddd'
 opt = opts().init('{} --load_model {}'.format(TASK, MODEL_PATH).split(' '))
 detector = detector_factory[opt.task](opt)
 
+@app.get("/service/getPhotosNumber")
+def read_photos_number():
+    if os.path.exists("../../outputCenterNet/id.txt"):
+        return {"photos_number": int(open("../../outputCenterNet/id.txt", "r").read())}
+    else:
+        return {"photos_number": 0}
+
 @app.post("/service/uploadfile/")
 async def create_upload_file(file: UploadFile):
     img = await file.read()
