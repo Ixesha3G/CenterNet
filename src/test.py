@@ -36,9 +36,9 @@ class PrefetchDataset(torch.utils.data.Dataset):
     for scale in opt.test_scales:
       if opt.task == 'ddd':
         images[scale], meta[scale] = self.pre_process_func(
-          image, scale, img_info['calib'])
+          image, scale, img_info['calib'], debug = opt.mode_choice)#changed
       else:
-        images[scale], meta[scale] = self.pre_process_func(image, scale)
+        images[scale], meta[scale] = self.pre_process_func(image, scale, debug = opt.mode_choice)#changed
     return img_id, {'images': images, 'image': image, 'meta': meta}
 
   def __len__(self):
@@ -67,6 +67,8 @@ def prefetch_test(opt):
   time_stats = ['tot', 'load', 'pre', 'net', 'dec', 'post', 'merge']
   avg_time_stats = {t: AverageMeter() for t in time_stats}
   for ind, (img_id, pre_processed_images) in enumerate(data_loader):
+    #debug = 1 #changed
+    #print("debug in test.py:", debug) #changed
     ret = detector.run(pre_processed_images)
     results[img_id.numpy().astype(np.int32)[0]] = ret['results']
     Bar.suffix = '[{0}/{1}]|Tot: {total:} |ETA: {eta:} '.format(
@@ -102,9 +104,12 @@ def test(opt):
     img_info = dataset.coco.loadImgs(ids=[img_id])[0]
     img_path = os.path.join(dataset.img_dir, img_info['file_name'])
 
+    #debug=1
     if opt.task == 'ddd':
+      #print("debug in test.py:", debug)
       ret = detector.run(img_path, img_info['calib'])
     else:
+      #print("debug in test.py:", debug)
       ret = detector.run(img_path)
     
     results[img_id] = ret['results']
@@ -121,6 +126,8 @@ def test(opt):
 if __name__ == '__main__':
   opt = opts().parse()
   if opt.not_prefetch_test:
+    #print("not_prefetch_test is TRUE") #debug use
     test(opt)
   else:
+    #print("not_prefetch_test is FALSE")#debug use
     prefetch_test(opt)

@@ -16,8 +16,10 @@ from utils.post_process import ddd_post_process
 from utils.debugger import Debugger
 from utils.ddd_utils import compute_box_3d, project_to_image, alpha2rot_y
 from utils.ddd_utils import draw_box_3d, unproject_2d_to_3d
+from mkimpreprocess.mkpreprocess import hist_equal # newly added
 
 from .base_detector import BaseDetector
+
 
 class DddDetector(BaseDetector):
   def __init__(self, opt):
@@ -27,8 +29,14 @@ class DddDetector(BaseDetector):
                            [0, 0, 1., 0.004981016]], dtype=np.float32)
 
 
-  def pre_process(self, image, scale, calib=None):
+  def pre_process(self, image, scale, calib=None, debug=0):#changed
     height, width = image.shape[0:2]
+    #debug = 0 to restore original coding
+    #debug = 1
+    #print("debug in ddd.py:", debug)
+    if (debug == 1):
+      print("hist_equal is true")
+      image = hist_equal(image)
     
     inp_height, inp_width = self.opt.input_h, self.opt.input_w
     c = np.array([width / 2, height / 2], dtype=np.float32)

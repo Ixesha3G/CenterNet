@@ -35,6 +35,7 @@ class BaseDetector(object):
     self.pause = True
 
   def pre_process(self, image, scale, meta=None):
+    print("debug")
     height, width = image.shape[0:2]
     new_height = int(height * scale)
     new_width  = int(width * scale)
@@ -79,7 +80,7 @@ class BaseDetector(object):
   def show_results(self, debugger, image, results):
    raise NotImplementedError
 
-  def run(self, image_or_path_or_tensor, meta=None):
+  def run(self, image_or_path_or_tensor, meta=None, debug=0):#changed
     load_time, pre_time, net_time, dec_time, post_time = 0, 0, 0, 0, 0
     merge_time, tot_time = 0, 0
     debugger = Debugger(dataset=self.opt.dataset, ipynb=(self.opt.debug==3),
@@ -102,7 +103,8 @@ class BaseDetector(object):
     for scale in self.scales:
       scale_start_time = time.time()
       if not pre_processed:
-        images, meta = self.pre_process(image, scale, meta)
+        print("debug in base_detector.py:", debug)
+        images, meta = self.pre_process(image, scale, meta, debug)#changed
       else:
         # import pdb; pdb.set_trace()
         images = pre_processed_images['images'][scale][0]
