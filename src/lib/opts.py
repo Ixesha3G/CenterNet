@@ -32,7 +32,10 @@ class opts(object):
                                   'Reloaded the optimizer parameter and '
                                   'set load_model to model_last.pth '
                                   'in the exp dir if load_model is empty.') 
-
+    #newly added
+    self.parser.add_argument('--output_image_mode', default='orig',
+                             help='orig | HE | orig+HE')
+    
     # system
     self.parser.add_argument('--gpus', default='0', 
                              help='-1 for CPU, use comma for multiple gpus')
@@ -269,7 +272,10 @@ class opts(object):
     print('training chunk_sizes:', opt.chunk_sizes)
 
     opt.root_dir = os.path.join(os.path.dirname(__file__), '..', '..')
+    # original
     opt.data_dir = os.path.join(opt.root_dir, 'data')
+    # histogram equalized data
+    #opt.data_dir = os.path.join(opt.root_dir, 'data_prehe')
     opt.exp_dir = os.path.join(opt.root_dir, 'exp', opt.task)
     opt.save_dir = os.path.join(opt.exp_dir, opt.exp_id)
     opt.debug_dir = os.path.join(opt.save_dir, 'debug')
@@ -279,6 +285,10 @@ class opts(object):
       model_path = opt.save_dir[:-4] if opt.save_dir.endswith('TEST') \
                   else opt.save_dir
       opt.load_model = os.path.join(model_path, 'model_last.pth')
+
+    #newly added
+    mode_mapping = {'orig': 0, 'HE': 1, 'orig+HE': 2}
+    opt.mode_choice = mode_mapping[opt.output_image_mode]
     return opt
 
   def update_dataset_info_and_set_heads(self, opt, dataset):

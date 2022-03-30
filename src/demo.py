@@ -9,6 +9,7 @@ import cv2
 
 from opts import opts
 from detectors.detector_factory import detector_factory
+from mkimpreprocess.mkpreprocess import hist_equal # newly added
 
 image_ext = ['jpg', 'jpeg', 'png', 'webp']
 video_ext = ['mp4', 'mov', 'avi', 'mkv']
@@ -26,14 +27,19 @@ def demo(opt):
     detector.pause = False
     while True:
         _, img = cam.read()
-        cv2.imshow('input', img)
-        ret = detector.run(img)
-        time_str = ''
-        for stat in time_stats:
-          time_str = time_str + '{} {:.3f}s |'.format(stat, ret[stat])
-        print(time_str)
-        if cv2.waitKey(1) == 27:
-            return  # esc to quit
+        debug = 0
+        if (debug == 1):
+          for i in range(0,debug+1):
+            if(i==1):
+              img = hist_equal(img)
+            cv2.imshow('input', img)
+            ret = detector.run(img)
+            time_str = ''
+            for stat in time_stats:
+              time_str = time_str + '{} {:.3f}s |'.format(stat, ret[stat])
+            print(time_str)
+            if cv2.waitKey(1) == 27:
+                return  # esc to quit
   else:
     if os.path.isdir(opt.demo):
       image_names = []
@@ -47,6 +53,7 @@ def demo(opt):
     
     for (image_name) in image_names:
       ret = detector.run(image_name)
+      print(image_name)
       time_str = ''
       for stat in time_stats:
         time_str = time_str + '{} {:.3f}s |'.format(stat, ret[stat])
