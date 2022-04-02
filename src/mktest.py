@@ -145,5 +145,5 @@ if __name__ == '__main__':
   if True:
     save_dir = '/home/fyp/SSJ02a-21/CenterNet/exp/ddd/testing/stats_car_detection_3d.txt'
     result_dir = '/home/fyp/SSJ02a-21/CenterNet/exp/ddd/testing/model_result.txt'
-    print(read_ap_stat(save_dir, result_dir, image_mode=0))
+    print(read_ap_stat(save_dir, result_dir, image_mode=1))
   

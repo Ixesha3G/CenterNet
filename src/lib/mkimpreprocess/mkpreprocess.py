@@ -23,7 +23,7 @@ def hist_equal(img_in):
     
 # mask all pixels with value=0 and replace it with mean of the pixel values 
     cdf_m_b = np.ma.masked_equal(cdf_b,0)
-    #print("1st step: cdf_m_b")
+    #print("1st step: cdf_m_b")f
     #print(cdf_m_b)
     cdf_m_b = (cdf_m_b - cdf_m_b.min())*255/(cdf_m_b.max()-cdf_m_b.min())
     #print("2nd step: cdf_m_b")
@@ -72,7 +72,7 @@ def read_file(file_path):
     #print("len(temp)", len(temp))
     for i in range(len(temp)):
       content.append(temp[i].split())
-    #print(content==[])
+    print(content==[])
     return content
 
 def write_ap_record(ap, save_dir, image_mode, pr, ap_hist=None):
@@ -87,7 +87,7 @@ def write_ap_record(ap, save_dir, image_mode, pr, ap_hist=None):
     ls = percentage_change(pr, ap)
     rounded_ls = [ round(item, 6) for item in ls ]
     percent_diff_s = ' '.join(map(str, rounded_ls))
-    print('rounded_ls', rounded_ls)
+    #print('rounded_ls', rounded_ls)
     cb_changed = False
     if ap_hist==None:
     
@@ -110,11 +110,16 @@ def write_ap_record(ap, save_dir, image_mode, pr, ap_hist=None):
     #case2
       i=0
       hist = ap_hist
-      print(hist[i])
+      #print(hist[i])
       total_percent_diff = math.fsum(list(map(float, hist[i])))
+      #print('total_percent_diff', total_percent_diff)
       total_percent_diff_c = math.fsum(rounded_ls)
-      if total_percent_diff_c>total_percent_diff:
+      #print('total_percent_diff_c', total_percent_diff_c)
+      #print('total_percent_diff_c - total_percent_diff', total_percent_diff_c - total_percent_diff)
+      if (total_percent_diff_c-total_percent_diff>0):
         hist[i] =  percent_diff_s
+        cb_changed = True
+        #print("cb_changed1", cb_changed)
       else:
         line=' '.join(map(str, hist[i]))
       with open(save_dir, 'w') as writer:
@@ -138,7 +143,7 @@ def write_ap_record(ap, save_dir, image_mode, pr, ap_hist=None):
           if i<2:
             writer.write('\n')
           i = i+1
-        return cb_changed
+        #return cb_changed
     else:
     #case3: with history
     # cal the % change and replace current best if needed
@@ -155,12 +160,14 @@ def write_ap_record(ap, save_dir, image_mode, pr, ap_hist=None):
         #print('i',i)
         #print(list(map(float, hist[i])))
         total_percent_diff = math.fsum(list(map(float, hist[i]))) #orig total 
-        print('total_percent_diff', total_percent_diff)
+        #print('total_percent_diff', total_percent_diff)
         total_percent_diff_c = math.fsum(rounded_ls)
-        print('total_percent_diff_c', total_percent_diff_c)
+        #print('total_percent_diff_c', total_percent_diff_c)
         if total_percent_diff_c>total_percent_diff:
           hist[i] =  percent_diff_s
           line = hist[i]
+          cb_changed = True
+          #print("cb_changed2", cb_changed)
         else:
           line=' '.join(map(str, hist[i]))# first line convert back to string
         
@@ -170,6 +177,7 @@ def write_ap_record(ap, save_dir, image_mode, pr, ap_hist=None):
           line=' '.join(map(str, hist[i]))
           writer.write(line+'\n')
           i = i+1
+    print('cb_changed3', cb_changed)
     return cb_changed
         
 def read_ap_stat(save_dir, model_performance_history_path, image_mode):
@@ -196,6 +204,7 @@ def read_ap_stat(save_dir, model_performance_history_path, image_mode):
     stats = read_file(result_file_path)
     pr = [19.545927, 18.621721, 16.606655]
     ap = []
+    change_cb = False
     
     # cal the 3d ap
     for i in range(3):
@@ -220,7 +229,7 @@ def read_ap_stat(save_dir, model_performance_history_path, image_mode):
     if not os.path.exists(model_performance_history_path):
       # create txt file and write the result
       print("create and write to file")
-      write_ap_record(ap, model_performance_history_path, image_mode, pr)
+      change_cb = write_ap_record(ap, model_performance_history_path, image_mode, pr)
     else:
       # file exist, append to line 4-6/1-3
       hist = read_file(model_performance_history_path)
@@ -228,9 +237,9 @@ def read_ap_stat(save_dir, model_performance_history_path, image_mode):
         print("removing", model_performance_history_path)
         os.remove(model_performance_history_path)
         #go back to upper if case, i.e. ap_hist=NONE
-        write_ap_record(ap, model_performance_history_path, image_mode, pr)
-      write_ap_record(ap, model_performance_history_path, image_mode, pr, ap_hist=hist)
-    return True
+        change_cb = write_ap_record(ap, model_performance_history_path, image_mode, pr)
+      change_cb = write_ap_record(ap, model_performance_history_path, image_mode, pr, ap_hist=hist)
+    return change_cb
     
     #if not os.path.exists(model_performance_result_path):
       #os.makedirs(model_performance_result_path)

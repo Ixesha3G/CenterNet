@@ -35,7 +35,7 @@ class BaseDetector(object):
     self.pause = True
 
   def pre_process(self, image, scale, meta=None):
-    print("debug")
+    #print("debug")
     height, width = image.shape[0:2]
     new_height = int(height * scale)
     new_width  = int(width * scale)
@@ -103,7 +103,7 @@ class BaseDetector(object):
     for scale in self.scales:
       scale_start_time = time.time()
       if not pre_processed:
-        print("debug in base_detector.py:", debug)
+        #print("debug in base_detector.py:", debug)
         images, meta = self.pre_process(image, scale, meta, debug)#changed
       else:
         # import pdb; pdb.set_trace()
