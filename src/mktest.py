@@ -2,11 +2,12 @@ import numpy as np
 import cv2
 import os
 import shutil
+import math
 from matplotlib import pyplot as plt
 
 import _init_paths
 
-from mkimpreprocess.mkpreprocess import hist_equal
+from mkimpreprocess.mkpreprocess import *
 
 def folder_create_if_not_exist(path):
   directory = path
@@ -62,81 +63,87 @@ if __name__ == '__main__':
 #   plt.hist(img.flatten(),256,[0,256], color = 'r')
 #   plt.xlim([0,256])
 #   plt.show()
-  
-  debug = 'test'
-  
-  im_folder_path = '/home/fyp/SSJ02a-21/CenterNet/data/kitti/training/image_2/'
-  anno_folder_path = '/home/fyp/SSJ02a-21/CenterNet/data/kitti/training/label_2/'
-  calib_folder_path = '/home/fyp/SSJ02a-21/CenterNet/data/kitti/training/calib/'
-  
-  output_folder_path = '/home/fyp/SSJ02a-21/CenterNet/data2/kitti/training/'
-  folder_create_if_not_exist(output_folder_path)
-  
-  output_im_folder_path = os.path.join(output_folder_path, 'image_2')
-  
-  output_anno_folder_path = os.path.join(output_folder_path, 'label_2')
-  output_calib_folder_path = os.path.join(output_folder_path, 'calib') 
-  
-  prefix= ''
-  #prefix = '620'
-  '''
-  prefix mapping
-  '620' = histrogram equalization
-  
-  '''
-  if not os.path.exists(output_im_folder_path):
-    folder_create_if_not_exist(output_im_folder_path)
-    for img in sorted(os.listdir(im_folder_path)):
-      im_path = os.path.join(im_folder_path, img)
-      new_image_name = prefix + img
-      print(im_path)
-      image = cv2.imread(im_path)
-      image = hist_equal(image)
+  if False:
+    debug = 'test'
     
-      os.chdir(output_im_folder_path)
-      cv2.imwrite(new_image_name, image)
-  else:
-    print('Folder exist: %s' % output_im_folder_path)
-  
-  if not os.path.exists(output_anno_folder_path):
-    folder_create_if_not_exist(output_anno_folder_path)
-    folder_create_if_not_exist(output_calib_folder_path)
-    for anno in sorted(os.listdir(anno_folder_path)): 
-      #new anno
+    im_folder_path = '/home/fyp/SSJ02a-21/CenterNet/data/kitti/training/image_2/'
+    anno_folder_path = '/home/fyp/SSJ02a-21/CenterNet/data/kitti/training/label_2/'
+    calib_folder_path = '/home/fyp/SSJ02a-21/CenterNet/data/kitti/training/calib/'
     
-      shutil.copy(os.path.join(anno_folder_path, anno), os.path.join(output_anno_folder_path, prefix + anno))
-      shutil.copy(os.path.join(calib_folder_path, anno), os.path.join(output_calib_folder_path, prefix + anno))
-      #new label
-  else:
-    print('Folder exist: %s' % output_anno_folder_path)
+    output_folder_path = '/home/fyp/SSJ02a-21/CenterNet/data2/kitti/training/'
+    folder_create_if_not_exist(output_folder_path)
     
-  split_folder_path = '/home/fyp/SSJ02a-21/CenterNet/data/kitti/ImageSets_3dop'
-  val_file = os.path.join(split_folder_path, 'val.txt')
-  trainval_file = os.path.join(split_folder_path, 'trainval.txt')
-  test_file = os.path.join(split_folder_path, 'test.txt')
-  train_file = os.path.join(split_folder_path, 'train.txt')
+    output_im_folder_path = os.path.join(output_folder_path, 'image_2')
+    
+    output_anno_folder_path = os.path.join(output_folder_path, 'label_2')
+    output_calib_folder_path = os.path.join(output_folder_path, 'calib') 
+    
+    prefix= ''
+    #prefix = '620'
+    '''
+    prefix mapping
+    '620' = histrogram equalization
+    
+    '''
+    if not os.path.exists(output_im_folder_path):
+      folder_create_if_not_exist(output_im_folder_path)
+      for img in sorted(os.listdir(im_folder_path)):
+        im_path = os.path.join(im_folder_path, img)
+        new_image_name = prefix + img
+        print(im_path)
+        image = cv2.imread(im_path)
+        image = hist_equal(image)
+      
+        os.chdir(output_im_folder_path)
+        cv2.imwrite(new_image_name, image)
+    else:
+      print('Folder exist: %s' % output_im_folder_path)
+    
+    if not os.path.exists(output_anno_folder_path):
+      folder_create_if_not_exist(output_anno_folder_path)
+      folder_create_if_not_exist(output_calib_folder_path) 
+      for anno in sorted(os.listdir(anno_folder_path)): 
+        #new anno
+      
+        shutil.copy(os.path.join(anno_folder_path, anno), os.path.join(output_anno_folder_path, prefix + anno))
+        shutil.copy(os.path.join(calib_folder_path, anno), os.path.join(output_calib_folder_path, prefix + anno))
+        #new label
+    else:
+      print('Folder exist: %s' % output_anno_folder_path)
+      
+    split_folder_path = '/home/fyp/SSJ02a-21/CenterNet/data/kitti/ImageSets_3dop'
+    val_file = os.path.join(split_folder_path, 'val.txt')
+    trainval_file = os.path.join(split_folder_path, 'trainval.txt')
+    test_file = os.path.join(split_folder_path, 'test.txt')
+    train_file = os.path.join(split_folder_path, 'train.txt')
+    
+    #split_output_folder_path = split_folder_path
+    split_output_folder_path_3dop = '/home/fyp/SSJ02a-21/CenterNet/data2/kitti/ImageSets_3dop'
+    split_output_folder_path_subcnn = '/home/fyp/SSJ02a-21/CenterNet/data2/kitti/ImageSets_subcnn'
+    folder_create_if_not_exist(split_output_folder_path_3dop)
+    folder_create_if_not_exist(split_output_folder_path_subcnn)
+    
+    val_output_file = os.path.join(split_output_folder_path_3dop, 'val.txt')
+    trainval_output_file = os.path.join(split_output_folder_path_3dop, 'trainval.txt')
+    test_output_file = os.path.join(split_output_folder_path_3dop, 'test.txt')
+    train_output_file = os.path.join(split_output_folder_path_3dop, 'train.txt')
+    
+    print('change split file: %s' % val_file)
+    split_txt_change(val_file, prefix, val_output_file)
+    print('change split file: %s' % trainval_file)
+    split_txt_change(trainval_file, prefix, trainval_output_file)
+    print('change split file: %s' % test_file)
+    split_txt_change(test_file, prefix, test_output_file)
+    print('change split file: %s' % train_file)
+    split_txt_change(train_file, prefix, train_output_file)
+    
+    shutil.copy(val_output_file, os.path.join(split_output_folder_path_subcnn, 'val.txt'))
+    shutil.copy(trainval_output_file, os.path.join(split_output_folder_path_subcnn, 'trainval.txt'))
+    shutil.copy(test_output_file, os.path.join(split_output_folder_path_subcnn, 'test.txt'))
+    shutil.copy(train_output_file, os.path.join(split_output_folder_path_subcnn, 'train.txt'))
+    
+  if True:
+    save_dir = '/home/fyp/SSJ02a-21/CenterNet/exp/ddd/testing/stats_car_detection_3d.txt'
+    result_dir = '/home/fyp/SSJ02a-21/CenterNet/exp/ddd/testing/model_result.txt'
+    print(read_ap_stat(save_dir, result_dir, image_mode=0))
   
-  #split_output_folder_path = split_folder_path
-  split_output_folder_path_3dop = '/home/fyp/SSJ02a-21/CenterNet/data2/kitti/ImageSets_3dop'
-  split_output_folder_path_subcnn = '/home/fyp/SSJ02a-21/CenterNet/data2/kitti/ImageSets_subcnn'
-  folder_create_if_not_exist(split_output_folder_path_3dop)
-  folder_create_if_not_exist(split_output_folder_path_subcnn)
-  
-  val_output_file = os.path.join(split_output_folder_path_3dop, 'val.txt')
-  trainval_output_file = os.path.join(split_output_folder_path_3dop, 'trainval.txt')
-  test_output_file = os.path.join(split_output_folder_path_3dop, 'test.txt')
-  train_output_file = os.path.join(split_output_folder_path_3dop, 'train.txt')
-  
-  print('change split file: %s' % val_file)
-  split_txt_change(val_file, prefix, val_output_file)
-  print('change split file: %s' % trainval_file)
-  split_txt_change(trainval_file, prefix, trainval_output_file)
-  print('change split file: %s' % test_file)
-  split_txt_change(test_file, prefix, test_output_file)
-  print('change split file: %s' % train_file)
-  split_txt_change(train_file, prefix, train_output_file)
-  
-  shutil.copy(val_output_file, os.path.join(split_output_folder_path_subcnn, 'val.txt'))
-  shutil.copy(trainval_output_file, os.path.join(split_output_folder_path_subcnn, 'trainval.txt'))
-  shutil.copy(test_output_file, os.path.join(split_output_folder_path_subcnn, 'test.txt'))
-  shutil.copy(train_output_file, os.path.join(split_output_folder_path_subcnn, 'train.txt'))
