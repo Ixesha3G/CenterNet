@@ -7,7 +7,7 @@ import numpy as np
 from progress.bar import Bar
 import time
 import torch
-
+import os
 
 from models.decode import ddd_decode
 from models.utils import flip_tensor
@@ -115,4 +115,3 @@ class DddDetector(BaseDetector):
     cur_dir = os.path.dirname(os.getcwd())
     tar_dir = os.path.abspath(os.path.join(cur_dir, '../outputCenterNet'))
     debugger.save_all_imgs(path=tar_dir, genID=True)
-    debugger.show_all_imgs(pause=self.pause)
