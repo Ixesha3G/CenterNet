@@ -37,8 +37,15 @@ async def creat_camera_img(request: Request):
     camera_b64 = payload['camera']
     nparr = np.fromstring(base64.b64decode(camera_b64.split(',')[1]), np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    img1 = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    # HxWxC
+    # for i in range(2):
+    #     ret = detector.run(img, debug = i)['results']
+    #     detector.show_results(Debugger(dataset=opt.dataset), img, ret, debug = i)
     ret = detector.run(img)['results']
     detector.show_results(Debugger(dataset=opt.dataset), img, ret)
+    ret1= detector.run(img1, debug=1)['results']
+    detector.show_results(Debugger(dataset=opt.dataset), img1, ret1, debug=1)
     img_ID = 0
     if os.path.exists("../../outputCenterNet/id.txt"):
     	img_ID = int(open("../../outputCenterNet/id.txt", "r").read()) - 1
@@ -60,12 +67,17 @@ def read_photos(photo_id: int):
 
 @app.post("/service/uploadfile/")
 async def create_upload_file(file: UploadFile):
-    print(file)
     img = await file.read()
     img_buffer = np.frombuffer(img, dtype=np.uint8)
     img_numpy = cv2.imdecode(img_buffer, 1)
+    img_numpy1 = cv2.imdecode(img_buffer, 1)
+    # for i in range(2):
+    #     ret = detector.run(img_numpy, debug=i)['results']
+    #     detector.show_results(Debugger(dataset=opt.dataset), img_numpy, ret, debug=i)
     ret = detector.run(img_numpy)['results']
     detector.show_results(Debugger(dataset=opt.dataset), img_numpy, ret)
+    ret1= detector.run(img_numpy1, debug=1)['results']
+    detector.show_results(Debugger(dataset=opt.dataset), img_numpy1, ret1, debug=1)
     img_ID = 0
     if os.path.exists("../../outputCenterNet/id.txt"):
     	img_ID = int(open("../../outputCenterNet/id.txt", "r").read()) - 1

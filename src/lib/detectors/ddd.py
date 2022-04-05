@@ -105,7 +105,9 @@ class DddDetector(BaseDetector):
       img, dets[0], show_box=self.opt.reg_bbox, 
       center_thresh=self.opt.vis_thresh, img_id='det_pred')
   
-  def show_results(self, debugger, image, results):
+  def show_results(self, debugger, image, results, debug=0):
+    if debug==1:
+      image = hist_equal(image)
     debugger.add_3d_detection(
       image, results, self.this_calib,
       center_thresh=self.opt.vis_thresh, img_id='add_pred')
