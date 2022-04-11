@@ -25,7 +25,7 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-MODEL_PATH = './CenterNet/models/ddd_3dop.pth'
+MODEL_PATH = './CenterNet/models/model_last.pth'
 TASK = 'ddd'
 opt = opts().init('{} --load_model {}'.format(TASK, MODEL_PATH).split(' '))
 detector = detector_factory[opt.task](opt)
@@ -79,6 +79,6 @@ async def create_upload_file(file: UploadFile):
     detector.show_results(Debugger(dataset=opt.dataset), img_numpy1, ret1, debug=1)
     img_ID = 0
     if os.path.exists("./outputCenterNet/id.txt"):
-    	img_ID = int(open("./outputCenterNet/id.txt", "r").read()) - 1
+    	img_ID = int(open("./outputCenterNet/id.txt", "r").read()) - 2
     response_img = "./outputCenterNet/{}add_pred.png".format(img_ID)
     return FileResponse(response_img)
