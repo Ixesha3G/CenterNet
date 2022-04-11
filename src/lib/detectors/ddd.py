@@ -105,15 +105,22 @@ class DddDetector(BaseDetector):
       img, dets[0], show_box=self.opt.reg_bbox, 
       center_thresh=self.opt.vis_thresh, img_id='det_pred')
   
-  def show_results(self, debugger, image, results, debug=0):
-    if debug==1:
-      image = hist_equal(image)
+  def show_results(self, debugger, image, results, debug=0, orig_img=None):
+    # if debug==1:
+    #   image = hist_equal(image)
+    img = image
+    oimg = orig_img
+    if oimg is none:
+      if debug == 1:
+        oimg = hist_equal(oimg)
+      img = oimg[0.5*(h-384): 0.5*(h+384), :, :]
+
     debugger.add_3d_detection(
-      image, results, self.this_calib,
+      img, results, self.this_calib,
       center_thresh=self.opt.vis_thresh, img_id='add_pred')
     debugger.add_bird_view(
       results, center_thresh=self.opt.vis_thresh, img_id='bird_pred')
     #debugger.show_all_imgs(pause=self.pause)
     cur_dir = os.getcwd()
     tar_dir = os.path.abspath(os.path.join(cur_dir, './outputCenterNet'))
-    debugger.save_all_imgs(path=tar_dir, genID=True)
+    debugger.save_all_imgs(path=tar_dir, genID=True, orig_img=oimg)

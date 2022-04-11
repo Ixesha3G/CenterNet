@@ -41,10 +41,13 @@ async def creat_camera_img(request: Request):
     # for i in range(2):
     #     ret = detector.run(img, debug = i)['results']
     #     detector.show_results(Debugger(dataset=opt.dataset), img, ret, debug = i)
-    ret = detector.run(img)['results']
-    detector.show_results(Debugger(dataset=opt.dataset), img, ret)
-    ret1= detector.run(img1, debug=1)['results']
-    detector.show_results(Debugger(dataset=opt.dataset), img1, ret1, debug=1)
+    #crop it to 384*1280
+    det_img = img[0.5*(h-384): 0.5*(h+384), :, :]
+    det_img1 = img1[0.5*(h-384): 0.5*(h+384), :, :]
+    ret = detector.run(det_img)['results']
+    detector.show_results(Debugger(dataset=opt.dataset), det_img, ret, orig_img=img)
+    ret1= detector.run(det_img1, debug=1)['results']
+    detector.show_results(Debugger(dataset=opt.dataset), det_img1, ret1, debug=1, orig_img=img1)
     img_ID = 0
     if os.path.exists("./outputCenterNet/id.txt"):
     	img_ID = int(open("./outputCenterNet/id.txt", "r").read()) - 1
