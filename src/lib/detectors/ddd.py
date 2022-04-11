@@ -113,6 +113,7 @@ class DddDetector(BaseDetector):
     if oimg is none:
       if debug == 1:
         oimg = hist_equal(oimg)
+      h = oimg.shape[0]
       img = oimg[0.5*(h-384): 0.5*(h+384), :, :]
 
     debugger.add_3d_detection(

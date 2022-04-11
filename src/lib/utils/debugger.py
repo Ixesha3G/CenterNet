@@ -248,6 +248,7 @@ class Debugger(object):
       img = v
       if orig_img is not none:
         img = orig_img
+        h = orig_img.shape[0]
         img[0.5*(h-384): 0.5*(h+384), :, :] = v
       cv2.imwrite(path + '/{}{}.png'.format(prefix, i), img)
 

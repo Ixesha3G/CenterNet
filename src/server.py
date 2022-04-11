@@ -42,6 +42,7 @@ async def creat_camera_img(request: Request):
     #     ret = detector.run(img, debug = i)['results']
     #     detector.show_results(Debugger(dataset=opt.dataset), img, ret, debug = i)
     #crop it to 384*1280
+    h=img.shape[0]
     det_img = img[0.5*(h-384): 0.5*(h+384), :, :]
     det_img1 = img1[0.5*(h-384): 0.5*(h+384), :, :]
     ret = detector.run(det_img)['results']
@@ -76,10 +77,13 @@ async def create_upload_file(file: UploadFile):
     # for i in range(2):
     #     ret = detector.run(img_numpy, debug=i)['results']
     #     detector.show_results(Debugger(dataset=opt.dataset), img_numpy, ret, debug=i)
-    ret = detector.run(img_numpy)['results']
-    detector.show_results(Debugger(dataset=opt.dataset), img_numpy, ret)
-    ret1= detector.run(img_numpy1, debug=1)['results']
-    detector.show_results(Debugger(dataset=opt.dataset), img_numpy1, ret1, debug=1)
+    h=img.shape[0]
+    det_img = img[0.5*(h-384): 0.5*(h+384), :, :]
+    det_img1 = img1[0.5*(h-384): 0.5*(h+384), :, :]
+    ret = detector.run(det_img)['results']
+    detector.show_results(Debugger(dataset=opt.dataset), det_img, ret, orig_img=img_numpy)
+    ret1= detector.run(det_img1, debug=1)['results']
+    detector.show_results(Debugger(dataset=opt.dataset), det_img1, ret1, debug=1, orig_img=img_numpy1)
     img_ID = 0
     if os.path.exists("./outputCenterNet/id.txt"):
     	img_ID = int(open("./outputCenterNet/id.txt", "r").read()) - 1
