@@ -31,7 +31,7 @@ opt = opts().init('{} --load_model {}'.format(TASK, MODEL_PATH).split(' '))
 detector = detector_factory[opt.task](opt)
 
 @app.post("/camera/uploadcamera/")
-async def creat_camera_img(request: Request):
+async def create_camera_img(request: Request):
     payload = await request.json()
     camera_b64 = payload['camera']
     nparr = np.fromstring(base64.b64decode(camera_b64.split(',')[1]), np.uint8)
@@ -43,15 +43,15 @@ async def creat_camera_img(request: Request):
     #     detector.show_results(Debugger(dataset=opt.dataset), img, ret, debug = i)
     #crop it to 384*1280
     h=img.shape[0]
-    det_img = img[0.5*(h-384): 0.5*(h+384), :, :]
-    det_img1 = img1[0.5*(h-384): 0.5*(h+384), :, :]
+    det_img = img[int(0.5*(h-384)): int(0.5*(h+384)), :, :]
+    det_img1 = img1[int(0.5*(h-384)): int(0.5*(h+384)), :, :]
     ret = detector.run(det_img)['results']
     detector.show_results(Debugger(dataset=opt.dataset), det_img, ret, orig_img=img)
     ret1= detector.run(det_img1, debug=1)['results']
     detector.show_results(Debugger(dataset=opt.dataset), det_img1, ret1, debug=1, orig_img=img1)
     img_ID = 0
     if os.path.exists("./outputCenterNet/id.txt"):
-    	img_ID = int(open("./outputCenterNet/id.txt", "r").read()) - 1
+    	img_ID = int(open("./outputCenterNet/id.txt", "r").read()) - 2
     response_img = "./outputCenterNet/{}add_pred.png".format(img_ID)
     return FileResponse(response_img)
 
@@ -74,12 +74,14 @@ async def create_upload_file(file: UploadFile):
     img_buffer = np.frombuffer(img, dtype=np.uint8)
     img_numpy = cv2.imdecode(img_buffer, 1)
     img_numpy1 = cv2.imdecode(img_buffer, 1)
+    img_numpy = cv2.resize(img_numpy, (1280, 720), interpolation = cv2.INTER_AREA)
+    img_numpy1 = cv2.resize(img_numpy1, (1280, 720), interpolation = cv2.INTER_AREA)
     # for i in range(2):
     #     ret = detector.run(img_numpy, debug=i)['results']
     #     detector.show_results(Debugger(dataset=opt.dataset), img_numpy, ret, debug=i)
-    h=img.shape[0]
-    det_img = img[0.5*(h-384): 0.5*(h+384), :, :]
-    det_img1 = img1[0.5*(h-384): 0.5*(h+384), :, :]
+    h=img_numpy.shape[0]
+    det_img = img_numpy[int(0.5*(h-384)): int(0.5*(h+384)), :, :]
+    det_img1 = img_numpy1[int(0.5*(h-384)): int(0.5*(h+384)), :, :]
     ret = detector.run(det_img)['results']
     detector.show_results(Debugger(dataset=opt.dataset), det_img, ret, orig_img=img_numpy)
     ret1= detector.run(det_img1, debug=1)['results']

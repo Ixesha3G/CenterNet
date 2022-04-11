@@ -112,9 +112,9 @@ class DddDetector(BaseDetector):
     oimg = orig_img
     if debug == 1:
       oimg = hist_equal(oimg)
-    if oimg is none:
+    if oimg is not None:
       h = oimg.shape[0]
-      img = oimg[0.5*(h-384): 0.5*(h+384), :, :]
+      img = oimg[int(0.5*(h-384)): int(0.5*(h+384)), :, :]
     debugger.add_3d_detection(
       img, results, self.this_calib,
       center_thresh=self.opt.vis_thresh, img_id='add_pred')

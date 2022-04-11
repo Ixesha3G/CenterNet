@@ -246,10 +246,10 @@ class Debugger(object):
       np.savetxt(path + '/id.txt', np.ones(1) * (idx + 1), fmt='%d')
     for i, v in self.imgs.items():
       img = v
-      if orig_img is not none:
+      if orig_img is not None and i!='bird_pred':
         img = orig_img
         h = orig_img.shape[0]
-        img[0.5*(h-384): 0.5*(h+384), :, :] = v
+        img[int(0.5*(h-384)): int(0.5*(h+384)), :, :] = v
       cv2.imwrite(path + '/{}{}.png'.format(prefix, i), img)
 
   def remove_side(self, img_id, img):
