@@ -236,7 +236,7 @@ class Debugger(object):
   def save_img(self, imgId='default', path='./cache/debug/'):
     cv2.imwrite(path + '{}.png'.format(imgId), self.imgs[imgId])
     
-  def save_all_imgs(self, path='./cache/debug/', prefix='', genID=False):
+  def save_all_imgs(self, path='./cache/debug/', prefix='', genID=False, orig_img=None):
     if genID:
       try:
         idx = int(np.loadtxt(path + '/id.txt'))
@@ -245,7 +245,12 @@ class Debugger(object):
       prefix=idx
       np.savetxt(path + '/id.txt', np.ones(1) * (idx + 1), fmt='%d')
     for i, v in self.imgs.items():
-      cv2.imwrite(path + '/{}{}.png'.format(prefix, i), v)
+      img = v
+      if orig_img is not none:
+        img = orig_img
+        h = orig_img.shape[0]
+        img[0.5*(h-384): 0.5*(h+384), :, :] = v
+      cv2.imwrite(path + '/{}{}.png'.format(prefix, i), img)
 
   def remove_side(self, img_id, img):
     if not (img_id in self.imgs):
