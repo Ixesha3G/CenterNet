@@ -91,3 +91,13 @@ async def create_upload_file(file: UploadFile):
     	img_ID = int(open("./outputCenterNet/id.txt", "r").read()) - 2
     response_img = "./outputCenterNet/{}add_pred.png".format(img_ID)
     return FileResponse(response_img)
+
+@app.get("/photo/add_pred/{param}")
+async def read_photos(param: int):
+    response_img = "./outputCenterNet/{}add_pred.png".format(param)
+    return FileResponse(response_img)
+
+@app.get("/photo/bird_pred/{param}")
+async def read_photos(param: int):
+    response_img = "./outputCenterNet/{}bird_pred.png".format(param)
+    return FileResponse(response_img)
