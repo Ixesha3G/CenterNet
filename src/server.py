@@ -25,7 +25,7 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-MODEL_PATH = './CenterNet/models/model_last.pth'
+MODEL_PATH = './CenterNet/models/model_best.pth'
 TASK = 'ddd'
 opt = opts().init('{} --load_model {}'.format(TASK, MODEL_PATH).split(' '))
 detector = detector_factory[opt.task](opt)
