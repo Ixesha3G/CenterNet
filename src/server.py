@@ -37,11 +37,6 @@ async def create_camera_img(request: Request):
     nparr = np.fromstring(base64.b64decode(camera_b64.split(',')[1]), np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     img1 = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    # HxWxC
-    # for i in range(2):
-    #     ret = detector.run(img, debug = i)['results']
-    #     detector.show_results(Debugger(dataset=opt.dataset), img, ret, debug = i)
-    #crop it to 384*1280
     h=img.shape[0]
     det_img = img[int(0.5*(h-384)): int(0.5*(h+384)), :, :]
     det_img1 = img1[int(0.5*(h-384)): int(0.5*(h+384)), :, :]
@@ -76,9 +71,6 @@ async def create_upload_file(file: UploadFile):
     img_numpy1 = cv2.imdecode(img_buffer, 1)
     img_numpy = cv2.resize(img_numpy, (1280, 720), interpolation = cv2.INTER_AREA)
     img_numpy1 = cv2.resize(img_numpy1, (1280, 720), interpolation = cv2.INTER_AREA)
-    # for i in range(2):
-    #     ret = detector.run(img_numpy, debug=i)['results']
-    #     detector.show_results(Debugger(dataset=opt.dataset), img_numpy, ret, debug=i)
     h=img_numpy.shape[0]
     det_img = img_numpy[int(0.5*(h-384)): int(0.5*(h+384)), :, :]
     det_img1 = img_numpy1[int(0.5*(h-384)): int(0.5*(h+384)), :, :]
